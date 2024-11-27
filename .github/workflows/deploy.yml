@@ -24,10 +24,9 @@ jobs:
       - name: Deploy to EC2
         run: |
           echo "Conectándose a la instancia EC2..."
-          ssh -o StrictHostKeyChecking=no ec2-ubuntu@<34.201.244.87> << 'EOF'
+          ssh -i ~/.ssh/devops.pm -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             echo "Desplegando archivos al servidor..."
-            cd /var/www/html  # Ruta donde desplegarás index.html
-            git pull origin main
-            cp -r /home/ubuntu/var/www/html/
+            sudo mkdir -p /var/www/html
+            sudo cp /home/ubuntu/index.html /var/www/html/
             echo "Archivos desplegados correctamente."
           EOF

@@ -28,6 +28,6 @@ jobs:
             echo "Desplegando archivos al servidor..."
             cd /var/www/html  # Ruta donde desplegarás index.html
             git pull origin main
-            cp -r /home/ubuntu/* /var/www/html/
+            cp -r /home/ubuntu/var/www/html/
             echo "Archivos desplegados correctamente."
           EOF

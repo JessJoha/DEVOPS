@@ -11,15 +11,28 @@ jobs:
  
     steps:
       # 1. Descarga el código del repositorio
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
  
-      # 2. Copia el archivo HTML a la instancia EC2
-      - name: Copy HTML to EC2
-        uses: appleboy/scp-action@v0.1.3
+      # 2. Comprime el archivo HTML antes de enviarlo
+      - name: Compress files
+        run: tar -czf deploy_package.tar.gz index.html
+ 
+      # 3. Envía el archivo comprimido a la instancia EC2
+      - name: Upload compressed file to EC2
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy_package
+          path: deploy_package.tar.gz
+ 
+      # 4. Usa SSH para transferir y extraer el archivo en la instancia EC2
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "./Index.html"
-          target: "/var/www/html/"
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            mkdir -p /var/www/html
+            tar -xzf deploy_package.tar.gz -C /var/www/html
+            rm deploy_package.tar.gz

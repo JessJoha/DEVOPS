@@ -1,0 +1,33 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Clonar el repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Paso 2: Configurar el agente SSH
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      # Paso 3: Desplegar a la instancia de EC2
+      - name: Deploy to EC2
+        run: |
+          echo "Conectándose a la instancia EC2..."
+          ssh -o StrictHostKeyChecking=no ec2-ubuntu@<34.201.244.87> << 'EOF'
+            echo "Desplegando archivos al servidor..."
+            cd /var/www/html  # Ruta donde desplegarás index.html
+            git pull origin main
+            cp -r /home/ubuntu/* /var/www/html/
+            echo "Archivos desplegados correctamente."
+          EOF

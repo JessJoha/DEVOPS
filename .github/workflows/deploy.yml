@@ -5,17 +5,17 @@ on:
     branches:
       - main
  
- 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
  
     steps:
-      # 1. Descarga el código del repositorio
+     
       - name: Checkout code
         uses: actions/checkout@v3
  
-      # 2. Copia el archivo HTML a la instancia EC2
+    
       - name: Copy HTML to EC2
         uses: appleboy/scp-action@v0.1.3
         with:
